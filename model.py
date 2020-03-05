@@ -683,6 +683,7 @@ class D_NET256(nn.Module):
         x_code4 = self.img_code_s64_1(x_code4)
         x_code4 = self.img_code_s64_2(x_code4)
         return x_code4
+
 class CAPTION_CNN(nn.Module):
     def __init__(self, embed_size):
         """Load the pretrained ResNet-152 and replace top fc layer."""

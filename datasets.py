@@ -2,23 +2,20 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-
-
 from nltk.tokenize import RegexpTokenizer
 from collections import defaultdict
 from cfg.config import cfg
-
 import torch
 import torch.utils.data as data
 from torch.autograd import Variable
 import torchvision.transforms as transforms
-
 import os
 import sys
 import numpy as np
 import pandas as pd
 from PIL import Image
 import numpy.random as random
+
 if sys.version_info[0] == 2:
     import cPickle as pickle
 else:
@@ -93,19 +90,28 @@ class TextDataset(data.Dataset):
                  base_size=64,
                  transform=None, target_transform=None):
         self.transform = transform
+        # defining normalization transformation
         self.norm = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        # defining target transformation - NOT REQUIRED
         self.target_transform = target_transform
+
+        # number of captions needed per image (still need to understand what this is!)
         self.embeddings_num = cfg.TEXT.CAPTIONS_PER_IMAGE
 
-        self.imsize = []
+        self.imsize = []    # initialize a list to hold image size
+
+        # since tree branch_num = 3, and base_size = 64
+        # imsize list is (64, 128, 256)
         for i in range(cfg.TREE.BRANCH_NUM):
             self.imsize.append(base_size)
             base_size = base_size * 2
+        print("base size: ", base_size)
 
+        # initializing a data list
         self.data = []
-        self.data_dir = data_dir
+        self.data_dir = data_dir  # path to data dir
         if data_dir.find('birds') != -1:
             self.bbox = self.load_bbox()
         else:
@@ -124,7 +130,7 @@ class TextDataset(data.Dataset):
         df_bounding_boxes = pd.read_csv(bbox_path,
                                         delim_whitespace=True,
                                         header=None).astype(int)
-        #
+        print(type(df_bounding_boxes))
         filepath = os.path.join(data_dir, 'CUB_200_2011/images.txt')
         df_filenames = \
             pd.read_csv(filepath, delim_whitespace=True, header=None)
@@ -133,7 +139,7 @@ class TextDataset(data.Dataset):
         #
         filename_bbox = {img_file[:-4]: [] for img_file in filenames}
         numImgs = len(filenames)
-        for i in xrange(0, numImgs):
+        for i in range(0, numImgs):
             # bbox = [x-left, y-top, width, height]
             bbox = df_bounding_boxes.iloc[i][1:].tolist()
 
@@ -147,7 +153,7 @@ class TextDataset(data.Dataset):
         for i in range(len(filenames)):
             cap_path = '%s/text/%s.txt' % (data_dir, filenames[i])
             with open(cap_path, "r") as f:
-                captions = f.read().decode('utf8').split('\n')
+                captions = f.read().split('\n')
                 cnt = 0
                 for cap in captions:
                     if len(cap) == 0:
@@ -249,9 +255,13 @@ class TextDataset(data.Dataset):
         return filenames, captions, ixtoword, wordtoix, n_words
 
     def load_class_id(self, data_dir, total_num):
+        print("Data dir: ", data_dir)
         if os.path.isfile(data_dir + '/class_info.pickle'):
-            with open(data_dir + '/class_info.pickle', 'rb') as f:
-                class_id = pickle.load(f)
+            try:
+                with open(data_dir + '/class_info.pickle', 'rb') as f:
+                    class_id = pickle.load(f)
+            except:
+                pass
         else:
             class_id = np.arange(total_num)
         return class_id
