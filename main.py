@@ -60,7 +60,7 @@ class Main:
                     for sent in sentences:
                         if len(sent) == 0:
                             continue
-                        sent = sent.replace("\ufffd\ufffd", " ")
+                        sent = sent.replace("\ufffd\ufffd", " ") # removing gibberish from a text such as a diamond with a question mark etc.
                         tokenizer = RegexpTokenizer(r'\w+')
                         tokens = tokenizer.tokenize(sent.lower())
                         if len(tokens) == 0:
