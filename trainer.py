@@ -1,6 +1,6 @@
 from __future__ import print_function
 from six.moves import range
-import torch
+import torch, pickle
 import torch.optim as optim
 from torch.autograd import Variable
 import torch.backends.cudnn as cudnn
@@ -28,8 +28,9 @@ class Trainer(object):
             mkdir_p(self.model_dir)
             mkdir_p(self.image_dir)
 
-        torch.cuda.set_device(cfg.GPU_ID)
-        cudnn.benchmark = True
+        if torch.cuda.is_available():   # change
+            torch.cuda.set_device(cfg.GPU_ID)
+            cudnn.benchmark = True
 
         self.batch_size = cfg.TRAIN.BATCH_SIZE
         self.max_epoch = cfg.TRAIN.MAX_EPOCH
@@ -61,6 +62,7 @@ class Trainer(object):
         state_dict = \
             torch.load(cfg.TRAIN.NET_E,
                        map_location=lambda storage, loc: storage)
+        print(state_dict)
         text_encoder.load_state_dict(state_dict)
         for p in text_encoder.parameters():
             p.requires_grad = False
@@ -69,13 +71,18 @@ class Trainer(object):
 
         # Caption models - cnn_encoder and rnn_decoder
         caption_cnn = CAPTION_CNN(cfg.CAP.embed_size)
-        caption_cnn.load_state_dict(torch.load(cfg.CAP.caption_cnn_path, map_location=lambda storage, loc: storage))
+        caption_cnn.load_state_dict(torch.load(cfg.CAP.caption_cnn_path, map_location=lambda storage, loc: storage))  # this line breaks
         for p in caption_cnn.parameters():
             p.requires_grad = False
         print('Load caption model from:', cfg.CAP.caption_cnn_path)
         caption_cnn.eval()
 
-        caption_rnn = CAPTION_RNN(cfg.CAP.embed_size, cfg.CAP.hidden_size * 2, self.n_words, cfg.CAP.num_layers)
+        # with open(cfg.CAP.vocab_path, 'rb') as f:
+        #     vocab = pickle.load(f)
+        # print(len(vocab))
+
+        vocab = 9956   # vocabulary size of COCO dataset
+        caption_rnn = CAPTION_RNN(cfg.CAP.embed_size, cfg.CAP.hidden_size * 2, vocab, cfg.CAP.num_layers)
         caption_rnn.load_state_dict(torch.load(cfg.CAP.caption_rnn_path, map_location=lambda storage, loc: storage))
         for p in caption_rnn.parameters():
             p.requires_grad = False

@@ -3,7 +3,8 @@ DATASET_NAME: 'birds'
 DATA_DIR: '/Users/nikunjlad/data/CUB/birds'
 GPU_ID: 3
 WORKERS: 4
-OUTPUT_PATH: '/Users/nikunjlad/data/CUB/qtt/MirrorGAN/'
+OUTPUT_PATH: '/Users/nikunjlad/data/CUB/qtt/MirrorGAN'
+MODEL: "/Users/nikunjlad/data/CUB/inception_v3.pt"
 TREE:
     BRANCH_NUM: 3
 
@@ -17,7 +18,7 @@ TRAIN:
     DISCRIMINATOR_LR: 0.0002
     GENERATOR_LR: 0.0002
 
-    NET_E: '/Users/nikunjlad/data/CUB/STEM/text_encoder.pt'
+    NET_E: '/Users/nikunjlad/data/CUB/STEM/text_encoder.pth'
     SMOOTH:
         GAMMA1: 4.0  # 1,2,5 good 4 best  10&100bad
         GAMMA2: 5.0
@@ -30,9 +31,9 @@ CAP:
     hidden_size: 256
     num_layers: 1
     learning_rate: 0.001
-    caption_cnn_path: '/Users/nikunjlad/data/CUB/STREAM/cnn_encoder.ckpt'
-    caption_rnn_path: '/Users/nikunjlad/data/CUB/STREAM/rnn_decoder.ckpt'
-
+    caption_cnn_path: '/Users/nikunjlad/data/CUB/STREAM/encoder-5-3000.pt'
+    caption_rnn_path: '/Users/nikunjlad/data/CUB/STREAM/decoder-5-3000.pt'
+    vocab_path: '/Users/nikunjlad/data/CUB/STREAM/vocab.pkl'
 GAN:
     DF_DIM: 64
     GF_DIM: 32

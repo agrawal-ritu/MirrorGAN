@@ -20,6 +20,7 @@ __C.WORKERS = 6
 __C.OUTPUT_PATH = ''
 __C.RNN_TYPE = 'LSTM'   # 'GRU'
 __C.B_VALIDATION = False
+__C.MODEL = ''
 
 __C.TREE = edict()
 __C.TREE.BRANCH_NUM = 3
@@ -56,6 +57,7 @@ __C.CAP.num_layers = 1
 __C.CAP.learning_rate = 0.001
 __C.CAP.caption_cnn_path = ''
 __C.CAP.caption_rnn_path = ''
+__C.CAP.vocab_path = ''
 
 
 # Modal options

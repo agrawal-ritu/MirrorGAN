@@ -20,6 +20,7 @@ sys.path.append(dir_path)
 
 class Main:
 
+    # change
     def __init__(self):
         self.cfg_file = "/Users/nikunjlad/Github/MirrorGAN/cfg/train_bird.yml"
         self.gpu = 1
@@ -90,11 +91,11 @@ class Main:
 
 
 if __name__ == "__main__":
-    m = Main()
+    m = Main()   # change. object of Main class to handle code execution
     # args = parse_args()  # argument parser object
 
     # check if the passed config file is not None
-    if m.cfg_file is not None:
+    if m.cfg_file is not None:   # change
         # cf_file = "/Users/nikunjlad/Github/MirrorGAN/cfg/train_bird.yml"
         cfg_from_file(m.cfg_file)
 
@@ -128,12 +129,16 @@ if __name__ == "__main__":
         # bshuffle = False
         split_dir = 'test'
 
-    # Get data loader
+    # Get image size to be set during resize operation (3 * (2 **
     imsize = cfg.TREE.BASE_SIZE * (2 ** (cfg.TREE.BRANCH_NUM - 1))
+
+    # define the image transformations here
     image_transform = transforms.Compose([
-        transforms.Scale(int(imsize * 76 / 64)),
+        transforms.Resize(int(imsize * 76 / 64)),
         transforms.RandomCrop(imsize),
         transforms.RandomHorizontalFlip()])
+
+    # create a pytorch dataset object using the Dataset class.
     dataset = TextDataset(cfg.DATA_DIR, split_dir,
                           base_size=cfg.TREE.BASE_SIZE,
                           transform=image_transform)

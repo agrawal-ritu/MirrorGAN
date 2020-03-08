@@ -163,12 +163,17 @@ class CNN_ENCODER(nn.Module):
             self.nef = 256  # define a uniform ranker
 
         model = models.inception_v3()
-        url = 'https://download.pytorch.org/models/inception_v3_google-1a9a5a14.pth'
-        model.load_state_dict(model_zoo.load_url(url))
+        if cfg.MODEL == "":   # change
+            url = 'https://download.pytorch.org/models/inception_v3_google-1a9a5a14.pth'
+            model.load_state_dict(model_zoo.load_url(url))
+            print('Load pretrained model from ', url)
+            torch.save(model.state_dict(), 'inception_v3.pt')
+        else:
+            model.load_state_dict(torch.load(cfg.MODEL))
+            print("Load pretrained model from Inception_V3.pt")
+
         for param in model.parameters():
             param.requires_grad = False
-        print('Load pretrained model from ', url)
-        # print(model)
 
         self.define_module(model)
         self.init_trainable_weights()

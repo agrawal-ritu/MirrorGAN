@@ -98,7 +98,7 @@ class TextDataset(data.Dataset):
         self.target_transform = target_transform
 
         # number of captions needed per image (still need to understand what this is!)
-        self.embeddings_num = cfg.TEXT.CAPTIONS_PER_IMAGE
+        self.embeddings_num = cfg.TEXT.CAPTIONS_PER_IMAGE   # 10 captions
 
         self.imsize = []    # initialize a list to hold image size
 
@@ -124,6 +124,7 @@ class TextDataset(data.Dataset):
         self.class_id = self.load_class_id(split_dir, len(self.filenames))
         self.number_example = len(self.filenames)
 
+    # dictionary of bounding box co-ordinates
     def load_bbox(self):
         data_dir = self.data_dir
         bbox_path = os.path.join(data_dir, 'CUB_200_2011/bounding_boxes.txt')
@@ -192,7 +193,7 @@ class TextDataset(data.Dataset):
         vocab = [w for w in word_counts if word_counts[w] >= 0]
 
         ixtoword = {}
-        ixtoword[0] = '<end>'
+        ixtoword[0] = '<end>'  # [the very bird little]
         wordtoix = {}
         wordtoix['<end>'] = 0
         ix = 1
@@ -256,12 +257,13 @@ class TextDataset(data.Dataset):
 
     def load_class_id(self, data_dir, total_num):
         print("Data dir: ", data_dir)
+        # change
         if os.path.isfile(data_dir + '/class_info.pickle'):
-            try:
+            try:  # change
                 with open(data_dir + '/class_info.pickle', 'rb') as f:
                     class_id = pickle.load(f)
             except:
-                pass
+                class_id = np.arange(total_num)  # change
         else:
             class_id = np.arange(total_num)
         return class_id
